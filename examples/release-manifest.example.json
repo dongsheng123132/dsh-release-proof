@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "release": { "name": "example-app", "version": "1.2.3" },
+  "artifacts": [
+    {
+      "id": "windows-x64",
+      "expectedBytes": 123456,
+      "expectedSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "sources": [
+        {
+          "id": "primary",
+          "url": "https://downloads.example.com/example-app.exe",
+          "version": { "kind": "json", "url": "https://downloads.example.com/version.json", "field": "version" }
+        },
+        {
+          "id": "mirror",
+          "url": "https://mirror.example.com/example-app.exe",
+          "version": { "kind": "header", "name": "x-release-version" }
+        }
+      ]
+    }
+  ],
+  "options": { "timeoutMs": 10000, "concurrency": 4, "maxBytes": 268435456, "maxRedirects": 5 }
+}
