@@ -1,5 +1,10 @@
 # dsh-release-proof
 
+[![CI](https://github.com/dongsheng123132/dsh-release-proof/actions/workflows/check.yml/badge.svg)](https://github.com/dongsheng123132/dsh-release-proof/actions/workflows/check.yml)
+[![MIT license](https://img.shields.io/github/license/dongsheng123132/dsh-release-proof)](LICENSE)
+[![Node.js 22+](https://img.shields.io/badge/Node.js-%E2%89%A522-339933?logo=nodedotjs&logoColor=white)](package.json)
+[![Awesome DSH Plugins](https://img.shields.io/badge/Awesome_DSH-verified_lab-0969da)](https://github.com/dongsheng123132/awesome-dsh-plugins#2origin-plugin-lab)
+
 Reproducible multi-source release evidence for [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness).
 
 `dsh-release-proof` downloads every mirror declared in an explicit release manifest, verifies HTTP status, advertised and actual byte length, SHA-256, and release version, then writes a content-addressed JSON evidence file. It is aimed at the gap between “CI passed” and “users are receiving the same release from every download endpoint.”
