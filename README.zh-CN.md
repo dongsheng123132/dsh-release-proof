@@ -9,6 +9,10 @@
 
 它解决的不是“代码有没有构建成功”，而是“多个下载入口此刻给用户的是否真是同一个版本”。插件读取显式 release manifest，并发下载各镜像，核对 HTTP 状态、响应声明长度、实际字节数、SHA-256 与版本，最后写出内容寻址的 JSON 证据包。
 
+0.2.0 同时是正式 Codex 插件和独立 MCP server，并采用真实 DSH Web Loader 所要求的命名空间导出形态；仓库内有真实 Cordis 启动回归，防止这一加载契约再次漂移。
+
+本工具证明的是“下载传输与多镜像是否和清单声明一致”。它**不**证明发布者身份，也不验证签名发布证明；威胁模型包含这些要求时，应配合签名/来源验证器使用。
+
 ## 安全边界
 
 - 只允许匿名 HTTP(S)：拒绝认证字段、自定义请求头、Cookie、URL 查询串和片段。
@@ -22,7 +26,7 @@
 ## 安装到 DSH
 
 ```bash
-dsh plugins install github:dongsheng123132/dsh-release-proof
+dsh plugin --profile web add github:dongsheng123132/dsh-release-proof
 ```
 
 DSH bundle 注册两个工具：
@@ -38,6 +42,15 @@ DSH bundle 注册两个工具：
   "artifactDir": "release/evidence"
 }
 ```
+
+## MCP
+
+`.mcp.json` 还声明了独立 stdio MCP server：
+
+- `release_manifest_inspect`
+- `release_verify`
+
+MCP 只接收最大 1 MiB 的显式内联 `manifestJson`，不读写文件系统。联网仍然是匿名 HTTP(S)，并受清单中的超时、并发、重定向和响应字节上限约束；返回的确定性内容寻址描述可由调用方重新计算验证。
 
 ## 命令行
 
@@ -70,6 +83,8 @@ dsh-release-proof verify --root D:/project --manifest release/release-manifest.j
 npm test
 npm run check
 npm run smoke:plugin
+npm run smoke:mcp
+python C:/Users/ZhuanZ/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 ```
 
 要求 Node.js 22+。包内没有安装生命周期脚本，运行依赖只有可选的 DSH tools SDK peer。

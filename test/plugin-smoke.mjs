@@ -4,8 +4,12 @@ import { mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createDefinitions } from '../index.js'
+import * as plugin from '../index.js'
 
 const payload = Buffer.from('plugin-smoke\n')
+assert.equal('default' in plugin, false, 'a default export makes the real DSH Loader discard namespace inject metadata')
+assert.equal(plugin.name, 'dsh-release-proof')
+assert.deepEqual(plugin.inject, ['tools'])
 const root = await mkdtemp(join(tmpdir(), 'dsh-release-plugin-'))
 await writeFile(join(root, 'release.json'), JSON.stringify({
   schemaVersion: 1,
@@ -26,4 +30,4 @@ assert.equal(inspection.artifacts[0].sources.length, 2)
 const result = await tools[1].execute({ manifestPath: 'release.json', artifactDir: 'evidence' })
 assert.equal(result.passed, true)
 assert.equal(result.artifact.verifiedByReadBack, true)
-console.log(JSON.stringify({ ok: true, tools: tools.map(tool => tool.name), artifact: result.artifact }))
+console.log(JSON.stringify({ ok: true, namespacePlugin: true, inject: plugin.inject, tools: tools.map(tool => tool.name), artifact: result.artifact }))

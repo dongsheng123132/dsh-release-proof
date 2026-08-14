@@ -4,7 +4,7 @@ import { mkdtemp, readFile, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
-import { createReleaseProof, inspectReleaseManifest, normalizeManifest, verifyRelease } from '../lib/release-proof.mjs'
+import { createReleaseProof, inspectReleaseManifest, inspectReleaseManifestJson, normalizeManifest, verifyRelease, verifyReleaseManifestJson } from '../lib/release-proof.mjs'
 
 const payload = Buffer.from('release-v1\n')
 const payloadHash = createHash('sha256').update(payload).digest('hex')
@@ -54,6 +54,16 @@ test('writes deterministic content-addressed evidence and verifies read-back', a
   assert.equal(first.artifact.verifiedByReadBack, true)
   assert.equal(createHash('sha256').update(await readFile(join(root, first.artifact.path))).digest('hex'), first.artifact.sha256)
   assert.equal(first.proof.artifacts[0].sources.every(source => source.passed), true)
+})
+
+test('inline manifest surfaces share the core without filesystem access', async () => {
+  const input = JSON.stringify(rawManifest())
+  const inspection = inspectReleaseManifestJson(input)
+  const result = await verifyReleaseManifestJson(input, passingFetch)
+  assert.equal(inspection.manifestSha256, createHash('sha256').update(input).digest('hex'))
+  assert.equal(result.passed, true)
+  assert.equal(result.document.verifiedByRecomputation, true)
+  assert.match(result.document.filename, /^test-app-1\.0\.0-[a-f0-9]{12}\.release-proof\.json$/)
 })
 
 test('reports version divergence without leaking fetch errors', async () => {

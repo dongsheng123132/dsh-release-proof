@@ -9,6 +9,10 @@ Reproducible multi-source release evidence for [DeepSeek Harness](https://github
 
 `dsh-release-proof` downloads every mirror declared in an explicit release manifest, verifies HTTP status, advertised and actual byte length, SHA-256, and release version, then writes a content-addressed JSON evidence file. It is aimed at the gap between “CI passed” and “users are receiving the same release from every download endpoint.”
 
+Version 0.2.0 is a formal Codex plugin and standalone MCP server, and uses the namespace export shape required by the stock DSH Web Loader. A real Cordis boot regression test guards that loader contract.
+
+This tool proves transport and mirror consistency against values supplied by the manifest. It does **not** prove publisher identity or verify signed release attestations; use a signature/provenance verifier alongside it when that is part of your threat model.
+
 ## Safety model
 
 - Anonymous HTTP(S) only: source credentials, custom headers, cookies, query strings, and URL fragments are rejected.
@@ -22,7 +26,7 @@ Reproducible multi-source release evidence for [DeepSeek Harness](https://github
 ## Install in DSH
 
 ```bash
-dsh plugins install github:dongsheng123132/dsh-release-proof
+dsh plugin --profile web add github:dongsheng123132/dsh-release-proof
 ```
 
 The package exposes a standard DSH bundle through `package.json#dsh.bundle.patch` and registers:
@@ -38,6 +42,15 @@ Typical tool arguments:
   "artifactDir": "release/evidence"
 }
 ```
+
+## MCP
+
+The plugin also exposes a standalone stdio MCP server through `.mcp.json`:
+
+- `release_manifest_inspect`
+- `release_verify`
+
+MCP accepts an explicit inline `manifestJson` of at most 1 MiB. It does not read or write the filesystem. Verification still uses anonymous HTTP(S), the manifest's timeout/concurrency/redirect/byte limits, and returns a deterministic content-address descriptor that can be recomputed by the caller.
 
 ## CLI
 
@@ -76,6 +89,8 @@ or an anonymous JSON sidecar:
 npm test
 npm run check
 npm run smoke:plugin
+npm run smoke:mcp
+python C:/Users/ZhuanZ/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py .
 ```
 
 Requires Node.js 22 or newer. The package has no install lifecycle scripts and no runtime dependencies beyond the optional DSH tool SDK peer.
