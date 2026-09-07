@@ -1,6 +1,6 @@
 {
   "name": "dsh-release-proof",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Verify anonymous release mirrors and produce reproducible content-addressed evidence for DeepSeek Harness.",
   "author": {
     "name": "2Origin",
@@ -9,7 +9,13 @@
   "homepage": "https://github.com/dongsheng123132/dsh-release-proof#readme",
   "repository": "https://github.com/dongsheng123132/dsh-release-proof",
   "license": "MIT",
-  "keywords": ["deepseek-harness", "release", "sha256", "mirrors", "supply-chain"],
+  "keywords": [
+    "deepseek-harness",
+    "release",
+    "sha256",
+    "mirrors",
+    "supply-chain"
+  ],
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "DSH Release Proof",
@@ -17,7 +23,12 @@
     "longDescription": "Checks anonymous release mirrors against an explicit manifest for HTTP status, byte length, SHA-256 and version consistency, then writes a content-addressed evidence JSON file.",
     "developerName": "hfshfg",
     "category": "Developer Tools",
-    "capabilities": ["Read", "Audit"],
-    "defaultPrompt": ["Verify this release manifest across every declared source and return its content-addressed evidence."]
+    "capabilities": [
+      "Read",
+      "Audit"
+    ],
+    "defaultPrompt": [
+      "Verify this release manifest across every declared source and return its content-addressed evidence."
+    ]
   }
 }
